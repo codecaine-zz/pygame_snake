@@ -46,6 +46,13 @@ def message(msg: str, color: tuple):
     text_height = mesg.get_height()
     dis.blit(mesg, [(dis_width - text_width) / 2, (dis_height - text_height) / 2])
 
+def show_score(score):
+    """
+    Display the current score on the game display.
+    """
+    value = score_font.render("Your Score: " + str(score), True, yellow)
+    dis.blit(value, [0, 0])
+
 def gameLoop():
     """
     Main game loop.
@@ -73,9 +80,9 @@ def gameLoop():
         while game_close == True:
             dis.fill(blue)
             message("You Lost! Press C-Play Again or Q-Quit", red)
+            show_score(Length_of_snake - 1)  # Display score on game over screen
             pygame.display.update()
 
-            # Event handling
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
@@ -84,7 +91,6 @@ def gameLoop():
                     if event.key == pygame.K_c:
                         gameLoop()
 
-        # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 game_over = True
@@ -103,11 +109,9 @@ def gameLoop():
                     x1_change = snake_block
                     y1_change = 0
 
-        # Check if snake is out of bounds
         if x1 >= dis_width or x1 < 0 or y1 >= dis_height or y1 < 0:
             game_close = True
 
-        # Update snake position
         x1 += x1_change
         y1 += y1_change
         dis.fill(blue)
@@ -119,16 +123,14 @@ def gameLoop():
         if len(snake_List) > Length_of_snake:
             del snake_List[0]
 
-        # Check if snake has collided with itself
         for x in snake_List[:-1]:
             if x == snake_Head:
                 game_close = True
 
-        # Draw snake and update display
         our_snake(snake_block, snake_List)
+        show_score(Length_of_snake - 1)  # Display score during gameplay
         pygame.display.update()
 
-        # Check if snake has eaten food
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
             foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0
@@ -139,5 +141,4 @@ def gameLoop():
     pygame.quit()
     quit()
 
-# Start the game
 gameLoop()
